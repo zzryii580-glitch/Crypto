@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoNinja Academy — Dasar Kriptografi & Web3</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg-primary: rgba(6,4,8,0.55);
+    --bg-card: rgba(14,12,20,0.78);
+    --bg-glass: rgba(14,12,20,0.68);
+    --accent-red: #e63946;
+    --accent-orange: #ff6b2b;
+    --accent-gold: #d4a843;
+    --text-primary: #ede9e3;
+    --text-muted: #8a8a9a;
+    --border-color: rgba(230,57,70,0.18);
+    --glow-red: rgba(230,57,70,0.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Rajdhani',sans-serif;
+    color:var(--text-primary);
+    overflow-x:hidden;
+    min-height:100vh;
+    background:url('https://z-cdn-media.chatglm.cn/files/fe6bfa4f-d826-40ba-9854-b699bf179aa7.jpeg?auth_key=1887491580-b939e5ee1b654d3abf5865601e57d133-0-80505123e34d3d6eda5b4637d30c8e7f') center center/cover no-repeat fixed;
+    background-color:#0a0408;
+  }
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,4,8,0.28) 0%,rgba(6,4,8,0.12) 35%,rgba(6,4,8,0.18) 65%,rgba(6,4,8,0.42) 100%);
+  }
+  body::after{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.45) 100%);
+  }
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--accent-red);border-radius:3px;}
+
+  /* === SIDEBAR === */
+  .sidebar{
+    position:fixed;left:0;top:0;width:268px;height:100vh;
+    background:var(--bg-glass);
+    backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2);
+    border-right:1px solid var(--border-color);
+    z-index:100;overflow-y:auto;
+    transition:transform .4s cubic-bezier(.22,1,.36,1);
+  }
+  .sidebar::-webkit-scrollbar{width:3px;}
+  .sidebar::-webkit-scrollbar-thumb{background:rgba(230,57,70,0.3);border-radius:2px;}
+  .sidebar-logo{padding:16px 14px;border-bottom:1px solid var(--border-color);text-align:center;}
+  .sidebar-logo h1{
+    font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;
+    background:linear-gradient(135deg,var(--accent-red),var(--accent-orange),var(--accent-gold));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px;
+  }
+  .sidebar-logo .subtitle{font-size:9px;color:var(--text-muted);letter-spacing:5px;text-transform:uppercase;margin-top:2px;}
+  .nav-section{padding:12px 8px 4px;}
+  .nav-section-title{font-family:'Orbitron',sans-serif;font-size:8px;color:var(--accent-red);letter-spacing:3px;text-transform:uppercase;padding:0 10px;margin-bottom:5px;opacity:.8;}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:6px;
+    cursor:pointer;transition:all .25s;color:var(--text-muted);font-size:12.5px;font-weight:500;
+    border-left:3px solid transparent;
+  }
+  .nav-item:hover{background:rgba(230,57,70,0.1);color:var(--text-primary);}
+  .nav-item.active{background:linear-gradient(90deg,rgba(230,57,70,0.18),transparent);color:var(--accent-orange);border-left-color:var(--accent-red);}
+  .nav-item i{width:16px;text-align:center;font-size:11px;}
+  .nav-item .nav-badge{margin-left:auto;background:var(--accent-red);color:#fff;font-size:8px;padding:1px 5px;border-radius:7px;font-weight:700;font-family:'Orbitron',sans-serif;}
+  .nav-item.completed::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;font-size:8px;color:#4ade80;margin-left:auto;}
+  .nav-item.completed .nav-badge{display:none;}
+
+  /* === MAIN === */
+  .main-content{margin-left:268px;min-height:100vh;position:relative;z-index:1;}
+
+  /* === TOPBAR === */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(6,4,8,0.6);backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);
+    border-bottom:1px solid var(--border-color);padding:9px 26px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .topbar-left{display:flex;align-items:center;gap:12px;}
+  .hamburger{display:none;background:none;border:1px solid var(--border-color);color:var(--text-primary);padding:6px 8px;border-radius:5px;cursor:pointer;font-size:14px;transition:all .2s;}
+  .hamburger:hover{border-color:var(--accent-red);color:var(--accent-red);}
+  .breadcrumb{font-size:11px;color:var(--text-muted);}
+  .breadcrumb span{color:var(--accent-orange);font-weight:600;}
+  .topbar-right{display:flex;align-items:center;gap:8px;}
+  .topbar-btn{
+    background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.25);color:var(--accent-red);
+    padding:4px 10px;border-radius:5px;font-size:10px;font-family:'Rajdhani',sans-serif;
+    font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:1px;
+  }
+  .topbar-btn:hover{background:var(--accent-red);color:#fff;}
+
+  /* === PAGE === */
+  .page{display:none;padding:26px;animation:fadeInPage .45s ease;}
+  .page.active{display:block;}
+  @keyframes fadeInPage{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+  /* === HERO === */
+  .hero-section{position:relative;border-radius:14px;overflow:hidden;margin-bottom:24px;min-height:360px;display:flex;align-items:flex-end;border:1px solid var(--border-color);}
+  .hero-bg{position:absolute;inset:0;background:url('https://z-cdn-media.chatglm.cn/files/fe6bfa4f-d826-40ba-9854-b699bf179aa7.jpeg?auth_key=1887491580-b939e5ee1b654d3abf5865601e57d133-0-80505123e34d3d6eda5b4637d30c8e7f') center/cover;filter:brightness(0.5) saturate(1.1) contrast(1.1);}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,4,8,0.92) 0%,rgba(6,4,8,0.3) 50%,rgba(6,4,8,0.08) 100%);}
+  .hero-content{position:relative;z-index:2;padding:26px;width:100%;}
+  .hero-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(230,57,70,0.2);border:1px solid rgba(230,57,70,0.4);color:var(--accent-red);padding:3px 11px;border-radius:14px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;backdrop-filter:blur(8px);}
+  .hero-title{font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;line-height:1.1;margin-bottom:9px;background:linear-gradient(135deg,#fff 20%,var(--accent-orange) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero-desc{color:rgba(255,255,255,0.68);font-size:13px;max-width:540px;line-height:1.6;margin-bottom:16px;}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn-play{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent-red),var(--accent-orange));color:#fff;border:none;padding:10px 22px;border-radius:7px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:2px;transition:all .3s;box-shadow:0 4px 18px var(--glow-red);}
+  .btn-play:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow-red);}
+  .btn-secondary{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);color:var(--text-primary);padding:10px 20px;border-radius:7px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;transition:all .3s;}
+  .btn-secondary:hover{border-color:var(--accent-orange);color:var(--accent-orange);}
+  .episode-counter{position:absolute;top:14px;right:16px;font-family:'Orbitron',sans-serif;font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:3px;z-index:2;}
+
+  /* === PROGRESS === */
+  .progress-bar-container{background:var(--bg-card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border-color);border-radius:9px;padding:14px 16px;margin-bottom:22px;}
+  .progress-label{display:flex;justify-content:space-between;margin-bottom:7px;font-size:11px;font-weight:600;}
+  .progress-track{width:100%;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-red),var(--accent-orange));border-radius:3px;transition:width .6s ease;width:0%;}
+
+  /* === STATS === */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px;}
+  .stat-card{background:var(--bg-card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border-color);border-radius:9px;padding:14px;text-align:center;transition:all .3s;}
+  .stat-card:hover{border-color:rgba(230,57,70,0.35);transform:translateY(-2px);}
+  .stat-value{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800;color:var(--accent-orange);}
+  .stat-label{font-size:10px;color:var(--text-muted);margin-top:2px;letter-spacing:1px;}
+
+  /* === CARDS === */
+  .section-title{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;text-shadow:0 0 18px rgba(230,57,70,0.3);}
+  .section-title::before{content:'';width:4px;height:20px;background:linear-gradient(180deg,var(--accent-red),var(--accent-orange));border-radius:2px;}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-bottom:32px;}
+  .card{
+    background:var(--bg-card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--border-color);border-radius:10px;overflow:hidden;cursor:pointer;
+    transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;
+  }
+  .card::after{content:'';position:absolute;inset:0;border-radius:10px;background:linear-gradient(135deg,rgba(230,57,70,0.06),transparent 60%);opacity:0;transition:opacity .35s;pointer-events:none;}
+  .card:hover::after{opacity:1;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 10px 35px rgba(0,0,0,0.4);}
+
+  /* === CARD ILLUSTRATION (SVG-based, themed) === */
+  .card-illustration{
+    width:100%;height:140px;position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .card-illustration svg{width:100%;height:100%;position:absolute;inset:0;}
+  .card-illustration .illust-icon{
+    position:relative;z-index:2;font-size:42px;
+    filter:drop-shadow(0 0 20px rgba(230,57,70,0.5));
+    transition:all .35s;
+  }
+  .card:hover .illust-icon{transform:scale(1.12);filter:drop-shadow(0 0 30px rgba(230,57,70,0.7));}
+
+  .card-body{padding:13px;}
+  .card-episode{font-family:'Orbitron',sans-serif;font-size:8px;color:var(--accent-red);letter-spacing:2px;margin-bottom:4px;}
+  .card-title{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;margin-bottom:5px;line-height:1.3;}
+  .card-desc{font-size:11.5px;color:var(--text-muted);line-height:1.5;}
+  .card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;}
+  .card-tag{background:rgba(255,107,43,0.12);border:1px solid rgba(255,107,43,0.2);color:var(--accent-orange);padding:1px 7px;border-radius:9px;font-size:9px;font-weight:600;}
+
+  /* === LESSON === */
+  .lesson-detail{max-width:860px;}
+  .lesson-header{margin-bottom:26px;}
+  .lesson-number{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--accent-red);letter-spacing:4px;margin-bottom:7px;}
+  .lesson-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:800;margin-bottom:12px;line-height:1.2;}
+  .lesson-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+  .lesson-meta-item{display:flex;align-items:center;gap:4px;color:var(--text-muted);font-size:11px;}
+  .lesson-meta-item i{color:var(--accent-orange);font-size:10px;}
+  .lesson-intro{color:rgba(255,255,255,0.62);font-size:13px;line-height:1.75;margin-bottom:20px;padding:14px 16px;background:rgba(230,57,70,0.06);border:1px solid var(--border-color);border-left:3px solid var(--accent-red);border-radius:0 7px 7px 0;backdrop-filter:blur(8px);}
+  .lesson-section{margin-bottom:24px;}
+  .lesson-section h3{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;margin-bottom:9px;color:var(--accent-orange);}
+  .lesson-section p{color:rgba(255,255,255,0.62);font-size:12.5px;line-height:1.8;margin-bottom:9px;}
+  .lesson-section ul{list-style:none;padding:0;margin-bottom:9px;}
+  .lesson-section ul li{position:relative;padding-left:16px;color:rgba(255,255,255,0.62);font-size:12.5px;line-height:1.8;}
+  .lesson-section ul li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;background:var(--accent-red);border-radius:50%;}
+  .lesson-section strong{color:var(--text-primary);}
+  .lesson-section code{background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--accent-orange);}
+
+  /* === CODE === */
+  .code-block{background:rgba(6,4,10,0.88);backdrop-filter:blur(8px);border:1px solid var(--border-color);border-radius:8px;overflow:hidden;margin:12px 0 20px;}
+  .code-header{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border-color);}
+  .code-lang{font-family:'Orbitron',sans-serif;font-size:8px;color:var(--accent-orange);letter-spacing:2px;}
+  .code-copy{background:none;border:1px solid var(--border-color);color:var(--text-muted);padding:2px 8px;border-radius:4px;font-size:9px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;transition:all .2s;}
+  .code-copy:hover{border-color:var(--accent-red);color:var(--accent-red);}
+  .code-block pre{padding:12px;overflow-x:auto;font-size:11.5px;line-height:1.65;color:#c8c8d8;font-family:'Courier New',monospace;}
+  .code-block pre .kw{color:var(--accent-red);}
+  .code-block pre .fn{color:#61afef;}
+  .code-block pre .str{color:#98c379;}
+  .code-block pre .cmt{color:#5c6370;font-style:italic;}
+  .code-block pre .num{color:var(--accent-gold);}
+
+  /* === INFO BOX === */
+  .info-box{padding:12px 14px;border-radius:8px;margin:12px 0 20px;display:flex;gap:10px;align-items:flex-start;backdrop-filter:blur(8px);}
+  .info-box.warning{background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);}
+  .info-box.warning i{color:var(--accent-gold);}
+  .info-box.info{background:rgba(97,175,239,0.1);border:1px solid rgba(97,175,239,0.2);}
+  .info-box.info i{color:#61afef;}
+  .info-box.danger{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.25);}
+  .info-box.danger i{color:var(--accent-red);}
+  .info-box p{font-size:11.5px;line-height:1.6;color:rgba(255,255,255,0.58);margin:0;}
+
+  /* === LESSON NAV === */
+  .lesson-nav{display:flex;justify-content:space-between;gap:12px;margin-top:32px;padding-top:18px;border-top:1px solid var(--border-color);}
+  .lesson-nav-btn{display:flex;align-items:center;gap:7px;background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border-color);color:var(--text-primary);padding:9px 14px;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;transition:all .3s;max-width:45%;}
+  .lesson-nav-btn:hover{border-color:var(--accent-red);background:rgba(230,57,70,0.1);}
+
+  /* === RINNEGAN === */
+  .rinnegan-float{position:fixed;bottom:16px;left:286px;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle,rgba(139,0,0,0.9) 0%,rgba(74,0,0,0.8) 50%,rgba(26,0,0,0.9) 100%);border:2px solid var(--accent-red);z-index:50;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:rp 3s ease-in-out infinite;box-shadow:0 0 18px var(--glow-red);transition:all .3s;opacity:.3;}
+  .rinnegan-float:hover{transform:scale(1.15);box-shadow:0 0 35px var(--glow-red);}
+  .rinnegan-inner{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,#ff4444 0%,#880000 100%);position:relative;}
+  .rinnegan-inner::before,.rinnegan-inner::after{content:'';position:absolute;border:1.5px solid rgba(255,100,100,0.5);border-radius:50%;}
+  .rinnegan-inner::before{width:22px;height:22px;top:-5px;left:-5px;}
+  .rinnegan-inner::after{width:34px;height:34px;top:-11px;left:-11px;}
+  @keyframes rp{0%,100%{box-shadow:0 0 18px var(--glow-red);}50%{box-shadow:0 0 30px var(--glow-red),0 0 50px rgba(230,57,70,0.1);}}
+
+  /* === TOAST === */
+  .toast{position:fixed;bottom:26px;right:26px;background:var(--bg-card);backdrop-filter:blur(18px);border:1px solid var(--accent-red);color:var(--text-primary);padding:11px 18px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,0.5);}
+  .toast.show{transform:translateY(0);opacity:1;}
+
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+  .sidebar-overlay.show{display:block;}
+
+  /* === RESPONSIVE === */
+  @media(max-width:1024px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.hamburger{display:block;}.rinnegan-float{left:16px;}.stats-row{grid-template-columns:repeat(2,1fr);}.hero-title{font-size:22px;}}
+  @media(max-width:640px){.page{padding:12px;}.cards-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;gap:8px;}.hero-section{min-height:260px;}.hero-title{font-size:18px;}.hero-desc{font-size:11px;}.lesson-title{font-size:17px;}.lesson-nav{flex-direction:column;}.lesson-nav-btn{max-width:100%;}.topbar{padding:7px 12px;}.rinnegan-float{bottom:10px;left:10px;width:38px;height:38px;}}
+  @media(max-width:768px) and (orientation:landscape){.sidebar{width:210px;}.sidebar.open{transform:translateX(0);}.hero-section{min-height:170px;}.hero-title{font-size:16px;}.page{padding:8px 12px;}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<nav class="sidebar" id="sidebar" role="navigation" aria-label="Menu Utama">
+  <div class="sidebar-logo"><h1>CRYPTONINJA</h1><div class="subtitle">Academy</div></div>
+  <div class="nav-section">
+    <div class="nav-section-title">Dasar Kriptografi</div>
+    <div class="nav-item active" data-page="home" role="button" tabindex="0"><i class="fas fa-home"></i> Beranda</div>
+    <div class="nav-item" data-page="hashing" role="button" tabindex="0"><i class="fas fa-fingerprint"></i> Hashing <span class="nav-badge">01</span></div>
+    <div class="nav-item" data-page="symmetric" role="button" tabindex="0"><i class="fas fa-lock"></i> Symmetric <span class="nav-badge">02</span></div>
+    <div class="nav-item" data-page="asymmetric" role="button" tabindex="0"><i class="fas fa-key"></i> Asymmetric <span class="nav-badge">03</span></div>
+    <div class="nav-item" data-page="digital-signature" role="button" tabindex="0"><i class="fas fa-signature"></i> Digital Signature <span class="nav-badge">04</span></div>
+    <div class="nav-item" data-page="key-exchange" role="button" tabindex="0"><i class="fas fa-exchange-alt"></i> Key Exchange <span class="nav-badge">05</span></div>
+    <div class="nav-item" data-page="hmac" role="button" tabindex="0"><i class="fas fa-shield-alt"></i> HMAC <span class="nav-badge">06</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Blockchain & Web3</div>
+    <div class="nav-item" data-page="bitcoin" role="button" tabindex="0"><i class="fab fa-bitcoin"></i> Bitcoin <span class="nav-badge">07</span></div>
+    <div class="nav-item" data-page="blockchain-py" role="button" tabindex="0"><i class="fas fa-cubes"></i> Blockchain Py <span class="nav-badge">08</span></div>
+    <div class="nav-item" data-page="ethereum" role="button" tabindex="0"><i class="fab fa-ethereum"></i> Ethereum <span class="nav-badge">09</span></div>
+    <div class="nav-item" data-page="solidity" role="button" tabindex="0"><i class="fas fa-file-code"></i> Solidity <span class="nav-badge">10</span></div>
+    <div class="nav-item" data-page="defi" role="button" tabindex="0"><i class="fas fa-chart-line"></i> DeFi <span class="nav-badge">11</span></div>
+    <div class="nav-item" data-page="web3-tools" role="button" tabindex="0"><i class="fas fa-tools"></i> Tools Web3 <span class="nav-badge">12</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Global & China</div>
+    <div class="nav-item" data-page="global-crypto" role="button" tabindex="0"><i class="fas fa-globe-asia"></i> Global <span class="nav-badge">13</span></div>
+    <div class="nav-item" data-page="china-crypto" role="button" tabindex="0"><i class="fas fa-yin-yang"></i> China <span class="nav-badge">14</span></div>
+  </div>
+</nav>
+
+<main class="main-content">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      <div class="breadcrumb">CryptoNinja / <span id="breadcrumbPage">Beranda</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="showToast('Progress tersimpan!')"><i class="fas fa-bookmark"></i> SAVE</button>
+      <button class="topbar-btn" onclick="toggleRinnegan()"><i class="fas fa-eye"></i> RINNEGAN</button>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="episode-counter">01 / 14</div>
+      <div class="hero-content">
+        <div class="hero-tag"><i class="fas fa-fire"></i> PANDUAN LENGKAP 2025</div>
+        <h2 class="hero-title">DASAR KRIPTOGRAFI &<br>BLOCKCHAIN WEB3</h2>
+        <p class="hero-desc">Panduan komprehensif dari Hashing hingga Smart Contract. Dipraktikkan langsung dengan Python & Solidity.</p>
+        <div class="hero-actions">
+          <button class="btn-play" onclick="navigateTo('hashing')"><i class="fas fa-play"></i> MULAI BELAJAR</button>
+          <button class="btn-secondary" onclick="showToast('Ditambahkan ke My List!')"><i class="fas fa-list-ul"></i> MY LIST</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="progress-bar-container">
+      <div class="progress-label"><span>Progress Belajar</span><span id="progressText">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value">14</div><div class="stat-label">MATERI</div></div>
+      <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">CODE LABS</div></div>
+      <div class="stat-card"><div class="stat-value">2</div><div class="stat-label">BAHASA</div></div>
+      <div class="stat-card"><div class="stat-value">&infin;</div><div class="stat-label">POTENSI</div></div>
+    </div>
+
+    <h3 class="section-title">Dasar Kriptografi</h3>
+    <div class="cards-grid" id="cards-kripto"></div>
+    <h3 class="section-title">Blockchain & Web3</h3>
+    <div class="cards-grid" id="cards-web3"></div>
+    <h3 class="section-title">Global & China</h3>
+    <div class="cards-grid" id="cards-global"></div>
+  </div>
+
+  <div id="lesson-pages-container"></div>
+</main>
+
+<div class="rinnegan-float" id="rinneganBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Ke Atas"><div class="rinnegan-inner"></div></div>
+<div class="toast" id="toast"><i class="fas fa-check-circle" style="color:var(--accent-red)"></i><span id="toastMsg">OK</span></div>
+
+<script>
+// ============================================================
+// SVG ILLUSTRATIONS — satu per topik, semuanya bertema kripto
+// ============================================================
+function getIllust(id) {
+  const map = {
+    hashing: {
+      bg: `linear-gradient(135deg,#1a0a10 0%,#200e16 40%,#140810 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="hg1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(230,57,70,0.25)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#hg1)"/>
+        <line x1="40" y1="30" x2="360" y2="30" stroke="rgba(230,57,70,0.1)" stroke-width="1"/>
+        <line x1="40" y1="50" x2="360" y2="50" stroke="rgba(230,57,70,0.08)" stroke-width="1"/>
+        <line x1="40" y1="70" x2="360" y2="70" stroke="rgba(230,57,70,0.1)" stroke-width="1"/>
+        <line x1="40" y1="90" x2="360" y2="90" stroke="rgba(230,57,70,0.06)" stroke-width="1"/>
+        <line x1="40" y1="110" x2="360" y2="110" stroke="rgba(230,57,70,0.08)" stroke-width="1"/>
+        <rect x="60" y="24" width="120" height="14" rx="3" fill="rgba(230,57,70,0.12)"/>
+        <rect x="200" y="44" width="160" height="14" rx="3" fill="rgba(255,107,43,0.1)"/>
+        <rect x="60" y="64" width="200" height="14" rx="3" fill="rgba(230,57,70,0.08)"/>
+        <rect x="280" y="84" width="80" height="14" rx="3" fill="rgba(212,168,67,0.1)"/>
+        <rect x="60" y="104" width="140" height="14" rx="3" fill="rgba(230,57,70,0.1)"/>
+        <text x="320" y="118" font-family="monospace" font-size="10" fill="rgba(230,57,70,0.4)">a7f3...</text>
+        <text x="200" y="78" font-family="monospace" font-size="10" fill="rgba(255,107,43,0.35)">SHA256</text>
+      </svg>`,
+      icon: 'fas fa-fingerprint',
+      iconColor: '#e63946'
+    },
+    symmetric: {
+      bg: `linear-gradient(135deg,#0a0f1a 0%,#101820 40%,#0a0e18 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="sg1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,107,43,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#sg1)"/>
+        <rect x="140" y="30" width="120" height="80" rx="10" fill="none" stroke="rgba(255,107,43,0.3)" stroke-width="2"/>
+        <rect x="155" y="45" width="90" height="50" rx="6" fill="rgba(255,107,43,0.08)" stroke="rgba(255,107,43,0.15)" stroke-width="1"/>
+        <circle cx="200" cy="70" r="12" fill="none" stroke="rgba(255,107,43,0.5)" stroke-width="2"/>
+        <line x1="200" y1="58" x2="200" y2="50" stroke="rgba(255,107,43,0.4)" stroke-width="2"/>
+        <line x1="200" y1="82" x2="200" y2="90" stroke="rgba(255,107,43,0.4)" stroke-width="2"/>
+        <rect x="60" y="55" width="50" height="30" rx="4" fill="rgba(230,57,70,0.12)" stroke="rgba(230,57,70,0.25)" stroke-width="1"/>
+        <text x="72" y="74" font-family="monospace" font-size="9" fill="rgba(230,57,70,0.6)">AES</text>
+        <rect x="290" y="55" width="50" height="30" rx="4" fill="rgba(230,57,70,0.12)" stroke="rgba(230,57,70,0.25)" stroke-width="1"/>
+        <text x="297" y="74" font-family="monospace" font-size="8" fill="rgba(230,57,70,0.6)">256-bit</text>
+        <line x1="110" y1="70" x2="140" y2="70" stroke="rgba(255,107,43,0.2)" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="260" y1="70" x2="290" y2="70" stroke="rgba(255,107,43,0.2)" stroke-width="1" stroke-dasharray="4"/>
+      </svg>`,
+      icon: 'fas fa-lock',
+      iconColor: '#ff6b2b'
+    },
+    asymmetric: {
+      bg: `linear-gradient(135deg,#10100a 0%,#1a1810 40%,#0e0c08 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="ag1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(212,168,67,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#ag1)"/>
+        <circle cx="140" cy="70" r="28" fill="none" stroke="rgba(212,168,67,0.35)" stroke-width="2"/>
+        <circle cx="140" cy="70" r="18" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+        <text x="130" y="74" font-family="monospace" font-size="10" fill="rgba(212,168,67,0.6)">PUB</text>
+        <circle cx="260" cy="70" r="28" fill="none" stroke="rgba(230,57,70,0.35)" stroke-width="2"/>
+        <circle cx="260" cy="70" r="18" fill="rgba(230,57,70,0.08)" stroke="rgba(230,57,70,0.2)" stroke-width="1"/>
+        <text x="248" y="74" font-family="monospace" font-size="10" fill="rgba(230,57,70,0.6)">PRIV</text>
+        <line x1="168" y1="55" x2="232" y2="55" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="3"/>
+        <line x1="168" y1="85" x2="232" y2="85" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="3"/>
+        <text x="175" y="48" font-family="monospace" font-size="7" fill="rgba(255,255,255,0.2)">encrypt</text>
+        <text x="182" y="98" font-family="monospace" font-size="7" fill="rgba(255,255,255,0.2)">decrypt</text>
+      </svg>`,
+      icon: 'fas fa-key',
+      iconColor: '#d4a843'
+    },
+    'digital-signature': {
+      bg: `linear-gradient(135deg,#0f0a14 0%,#1a1020 40%,#100a14 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="dg1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(230,57,70,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#dg1)"/>
+        <rect x="80" y="35" width="180" height="70" rx="6" fill="rgba(230,57,70,0.05)" stroke="rgba(230,57,70,0.15)" stroke-width="1"/>
+        <line x1="95" y1="55" x2="240" y2="55" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <line x1="95" y1="68" x2="220" y2="68" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="95" y1="81" x2="200" y2="81" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <path d="M 280 90 Q 300 60 320 75 Q 340 50 355 80" fill="none" stroke="rgba(230,57,70,0.5)" stroke-width="2.5"/>
+        <circle cx="280" cy="90" r="3" fill="rgba(230,57,70,0.6)"/>
+        <text x="285" y="100" font-family="monospace" font-size="7" fill="rgba(230,57,70,0.4)">valid</text>
+        <path d="M 290 45 L 295 52 L 310 38" fill="none" stroke="rgba(74,222,128,0.5)" stroke-width="2" stroke-linecap="round"/>
+      </svg>`,
+      icon: 'fas fa-signature',
+      iconColor: '#e63946'
+    },
+    'key-exchange': {
+      bg: `linear-gradient(135deg,#0a1014 0%,#0e1a20 40%,#0a1014 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="kg1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(97,175,239,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#kg1)"/>
+        <circle cx="100" cy="70" r="22" fill="none" stroke="rgba(97,175,239,0.3)" stroke-width="2"/>
+        <text x="88" y="74" font-family="monospace" font-size="9" fill="rgba(97,175,239,0.6)">A</text>
+        <circle cx="300" cy="70" r="22" fill="none" stroke="rgba(255,107,43,0.3)" stroke-width="2"/>
+        <text x="289" y="74" font-family="monospace" font-size="9" fill="rgba(255,107,43,0.6)">B</text>
+        <path d="M 125 60 Q 200 20 275 60" fill="none" stroke="rgba(97,175,239,0.2)" stroke-width="1.5" stroke-dasharray="5"/>
+        <path d="M 125 80 Q 200 120 275 80" fill="none" stroke="rgba(255,107,43,0.2)" stroke-width="1.5" stroke-dasharray="5"/>
+        <text x="175" y="38" font-family="monospace" font-size="7" fill="rgba(97,175,239,0.35)">pub_A →</text>
+        <text x="190" y="115" font-family="monospace" font-size="7" fill="rgba(255,107,43,0.35)">← pub_B</text>
+        <rect x="170" y="60" width="60" height="20" rx="10" fill="rgba(74,222,128,0.1)" stroke="rgba(74,222,128,0.25)" stroke-width="1"/>
+        <text x="178" y="74" font-family="monospace" font-size="7" fill="rgba(74,222,128,0.5)">secret</text>
+      </svg>`,
+      icon: 'fas fa-exchange-alt',
+      iconColor: '#61afef'
+    },
+    hmac: {
+      bg: `linear-gradient(135deg,#0a100a 0%,#101a10 40%,#0a100a 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="hg2" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(74,222,128,0.15)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#hg2)"/>
+        <path d="M 170 35 L 200 20 L 230 35 L 230 85 L 200 100 L 170 85 Z" fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.25)" stroke-width="1.5"/>
+        <text x="185" y="65" font-family="monospace" font-size="8" fill="rgba(74,222,128,0.5)">MAC</text>
+        <rect x="70" y="50" width="70" height="25" rx="4" fill="rgba(230,57,70,0.1)" stroke="rgba(230,57,70,0.2)" stroke-width="1"/>
+        <text x="78" y="66" font-family="monospace" font-size="7" fill="rgba(230,57,70,0.5)">message</text>
+        <rect x="260" y="50" width="70" height="25" rx="4" fill="rgba(212,168,67,0.1)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+        <text x="268" y="66" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.5)">key</text>
+        <line x1="140" y1="62" x2="170" y2="62" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <line x1="230" y1="62" x2="260" y2="62" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <path d="M 185 105 L 195 115 L 215 100" fill="none" stroke="rgba(74,222,128,0.4)" stroke-width="2" stroke-linecap="round"/>
+      </svg>`,
+      icon: 'fas fa-shield-alt',
+      iconColor: '#4ade80'
+    },
+    bitcoin: {
+      bg: `linear-gradient(135deg,#14100a 0%,#201a0e 40%,#14100a 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="bg1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(247,147,26,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height"140" fill="url(#bg1)"/>
+        <circle cx="200" cy="70" r="40" fill="none" stroke="rgba(247,147,26,0.25)" stroke-width="2"/>
+        <circle cx="200" cy="70" r="30" fill="rgba(247,147,26,0.05)" stroke="rgba(247,147,26,0.15)" stroke-width="1"/>
+        <text x="182" y="80" font-family="sans-serif" font-weight="bold" font-size="28" fill="rgba(247,147,26,0.4)">B</text>
+        <rect x="60" y="45" width="65" height="22" rx="4" fill="rgba(247,147,26,0.08)" stroke="rgba(247,147,26,0.15)" stroke-width="1"/>
+        <text x="67" y="60" font-family="monospace" font-size="7" fill="rgba(247,147,26,0.4)">BLOCK</text>
+        <rect x="275" y="45" width="65" height="22" rx="4" fill="rgba(247,147,26,0.08)" stroke="rgba(247,147,26,0.15)" stroke-width="1"/>
+        <text x="280" y="60" font-family="monospace" font-size="7" fill="rgba(247,147,26,0.4)">MINING</text>
+        <line x1="125" y1="56" x2="158" y2="65" stroke="rgba(247,147,26,0.12)" stroke-width="1"/>
+        <line x1="242" y1="65" x2="275" y2="56" stroke="rgba(247,147,26,0.12)" stroke-width="1"/>
+        <rect x="155" y="110" width="90" height="16" rx="3" fill="rgba(247,147,26,0.06)" stroke="rgba(247,147,26,0.12)" stroke-width="1"/>
+        <text x="165" y="121" font-family="monospace" font-size="7" fill="rgba(247,147,26,0.35)">PoW · SHA256</text>
+      </svg>`,
+      icon: 'fab fa-bitcoin',
+      iconColor: '#f7931a'
+    },
+    'blockchain-py': {
+      bg: `linear-gradient(135deg,#0a0e14 0%,#101820 40%,#0a0e14 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="bp1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(97,175,239,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#bp1)"/>
+        <rect x="40" y="40" width="80" height="60" rx="8" fill="rgba(97,175,239,0.08)" stroke="rgba(97,175,239,0.25)" stroke-width="1.5"/>
+        <text x="58" y="75" font-family="monospace" font-size="9" fill="rgba(97,175,239,0.5)">GEN</text>
+        <rect x="160" y="40" width="80" height="60" rx="8" fill="rgba(97,175,239,0.08)" stroke="rgba(97,175,239,0.25)" stroke-width="1.5"/>
+        <text x="170" y="75" font-family="monospace" font-size="8" fill="rgba(97,175,239,0.5)">BLK#1</text>
+        <rect x="280" y="40" width="80" height="60" rx="8" fill="rgba(97,175,239,0.08)" stroke="rgba(97,175,239,0.25)" stroke-width="1.5"/>
+        <text x="290" y="75" font-family="monospace" font-size="8" fill="rgba(97,175,239,0.5)">BLK#2</text>
+        <line x1="120" y1="70" x2="160" y2="70" stroke="rgba(97,175,239,0.3)" stroke-width="2"/>
+        <line x1="240" y1="70" x2="280" y2="70" stroke="rgba(97,175,239,0.3)" stroke-width="2"/>
+        <text x="130" y="65" font-family="monospace" font-size="6" fill="rgba(97,175,239,0.3)">hash</text>
+        <text x="250" y="65" font-family="monospace" font-size="6" fill="rgba(97,175,239,0.3)">hash</text>
+        <text x="170" y="118" font-family="monospace" font-size="7" fill="rgba(97,175,239,0.3)">chain → immutable</text>
+      </svg>`,
+      icon: 'fas fa-cubes',
+      iconColor: '#61afef'
+    },
+    ethereum: {
+      bg: `linear-gradient(135deg,#0e0a14 0%,#18102a 40%,#0e0a14 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="eg1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(98,126,234,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#eg1)"/>
+        <polygon points="200,25 230,55 200,85 170,55" fill="rgba(98,126,234,0.1)" stroke="rgba(98,126,234,0.35)" stroke-width="1.5"/>
+        <polygon points="200,50 215,65 200,80 185,65" fill="rgba(98,126,234,0.15)" stroke="rgba(98,126,234,0.2)" stroke-width="1"/>
+        <rect x="60" y="55" width="70" height="20" rx="4" fill="rgba(98,126,234,0.08)" stroke="rgba(98,126,234,0.15)" stroke-width="1"/>
+        <text x="66" y="69" font-family="monospace" font-size="7" fill="rgba(98,126,234,0.4)">EVM</text>
+        <rect x="270" y="55" width="70" height="20" rx="4" fill="rgba(98,126,234,0.08)" stroke="rgba(98,126,234,0.15)" stroke-width="1"/>
+        <text x="276" y="69" font-family="monospace" font-size="7" fill="rgba(98,126,234,0.4)">GAS</text>
+        <text x="175" y="115" font-family="monospace" font-size="7" fill="rgba(98,126,234,0.3)">PoS · Smart Contract</text>
+      </svg>`,
+      icon: 'fab fa-ethereum',
+      iconColor: '#627eea'
+    },
+    solidity: {
+      bg: `linear-gradient(135deg,#14100e 0%,#201a14 40%,#14100e 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="sl1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(212,168,67,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#sl1)"/>
+        <text x="120" y="50" font-family="monospace" font-size="11" fill="rgba(212,168,67,0.3)">contract</text>
+        <text x="140" y="68" font-family="monospace" font-size="10" fill="rgba(255,255,255,0.15)">MyToken</text>
+        <text x="140" y="86" font-family="monospace" font-size="10" fill="rgba(230,57,70,0.25)">function</text>
+        <text x="140" y="100" font-family="monospace" font-size="9" fill="rgba(212,168,67,0.2)">mint() {...}</text>
+        <text x="120" y="50" font-family="monospace" font-size="11" fill="rgba(212,168,67,0.3)">{</text>
+        <text x="120" y="110" font-family="monospace" font-size="11" fill="rgba(212,168,67,0.3)">}</text>
+        <rect x="280" y="40" width="80" height="20" rx="4" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.15)" stroke-width="1"/>
+        <text x="287" y="54" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.4)">ERC20</text>
+        <rect x="280" y="68" width="80" height="20" rx="4" fill="rgba(230,57,70,0.08)" stroke="rgba(230,57,70,0.15)" stroke-width="1"/>
+        <text x="287" y="82" font-family="monospace" font-size="7" fill="rgba(230,57,70,0.4)">ERC721</text>
+      </svg>`,
+      icon: 'fas fa-file-code',
+      iconColor: '#d4a843'
+    },
+    defi: {
+      bg: `linear-gradient(135deg,#100a0e 0%,#1a1018 40%,#100a0e 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="df1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(230,57,70,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#df1)"/>
+        <polyline points="60,100 100,80 140,90 180,50 220,65 260,35 300,45 340,25" fill="none" stroke="rgba(230,57,70,0.4)" stroke-width="2"/>
+        <polyline points="60,105 100,90 140,95 180,60 220,72 260,45 300,52 340,35" fill="none" stroke="rgba(255,107,43,0.2)" stroke-width="1"/>
+        <circle cx="260" cy="35" r="4" fill="rgba(230,57,70,0.5)"/>
+        <circle cx="340" cy="25" r="4" fill="rgba(230,57,70,0.5)"/>
+        <rect x="60" y="40" width="55" height="18" rx="3" fill="rgba(74,222,128,0.08)" stroke="rgba(74,222,128,0.15)" stroke-width="1"/>
+        <text x="66" y="53" font-family="monospace" font-size="7" fill="rgba(74,222,128,0.4)">DEX</text>
+        <rect x="130" y="40" width="55" height="18" rx="3" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.15)" stroke-width="1"/>
+        <text x="136" y="53" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.4)">Stake</text>
+        <rect x="200" y="40" width="55" height="18" rx="3" fill="rgba(97,175,239,0.08)" stroke="rgba(97,175,239,0.15)" stroke-width="1"/>
+        <text x="203" y="53" font-family="monospace" font-size="6" fill="rgba(97,175,239,0.4)">Lend</text>
+        <text x="120" y="125" font-family="monospace" font-size="7" fill="rgba(255,255,255,0.2)">TVL · APY · Yield</text>
+      </svg>`,
+      icon: 'fas fa-chart-line',
+      iconColor: '#e63946'
+    },
+    'web3-tools': {
+      bg: `linear-gradient(135deg,#0a0e10 0%,#101a1e 40%,#0a0e10 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="wt1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,107,43,0.18)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#wt1)"/>
+        <rect x="60" y="40" width="70" height="50" rx="6" fill="rgba(255,107,43,0.06)" stroke="rgba(255,107,43,0.2)" stroke-width="1"/>
+        <text x="76" y="70" font-family="monospace" font-size="8" fill="rgba(255,107,43,0.4)">Meta</text>
+        <text x="73" y="82" font-family="monospace" font-size="7" fill="rgba(255,107,43,0.25)">mask</text>
+        <rect x="150" y="40" width="70" height="50" rx="6" fill="rgba(97,175,239,0.06)" stroke="rgba(97,175,239,0.2)" stroke-width="1"/>
+        <text x="158" y="70" font-family="monospace" font-size="8" fill="rgba(97,175,239,0.4)">Remix</text>
+        <rect x="240" y="40" width="70" height="50" rx="6" fill="rgba(212,168,67,0.06)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+        <text x="248" y="70" font-family="monospace" font-size="8" fill="rgba(212,168,67,0.4)">Scan</text>
+        <rect x="330" y="40" width="50" height="50" rx="6" fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.2)" stroke-width="1"/>
+        <text x="336" y="68" font-family="monospace" font-size="6" fill="rgba(74,222,128,0.4)">HH</text>
+        <text x="130" y="115" font-family="monospace" font-size="7" fill="rgba(255,255,255,0.2)">developer arsenal</text>
+      </svg>`,
+      icon: 'fas fa-tools',
+      iconColor: '#ff6b2b'
+    },
+    'global-crypto': {
+      bg: `linear-gradient(135deg,#0a100e 0%,#101e18 40%,#0a100e 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="gc1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(74,222,128,0.15)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#gc1)"/>
+        <circle cx="200" cy="65" r="35" fill="none" stroke="rgba(74,222,128,0.2)" stroke-width="1.5"/>
+        <ellipse cx="200" cy="65" rx="55" ry="18" fill="none" stroke="rgba(74,222,128,0.12)" stroke-width="1"/>
+        <ellipse cx="200" cy="65" rx="18" ry="40" fill="none" stroke="rgba(74,222,128,0.12)" stroke-width="1"/>
+        <line x1="165" y1="65" x2="235" y2="65" stroke="rgba(74,222,128,0.15)" stroke-width="1"/>
+        <line x1="200" y1="30" x2="200" y2="100" stroke="rgba(74,222,128,0.15)" stroke-width="1"/>
+        <text x="100" y="35" font-family="monospace" font-size="7" fill="rgba(230,57,70,0.4)">Enigma</text>
+        <text x="270" y="35" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.4)">AES</text>
+        <text x="80" y="105" font-family="monospace" font-size="7" fill="rgba(97,175,239,0.4)">Caesar</text>
+        <text x="280" y="105" font-family="monospace" font-size="7" fill="rgba(255,107,43,0.4)">PQC</text>
+      </svg>`,
+      icon: 'fas fa-globe-asia',
+      iconColor: '#4ade80'
+    },
+    'china-crypto': {
+      bg: `linear-gradient(135deg,#140a0a 0%,#201010 40%,#140a0a 100%)`,
+      svg: `<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="cc1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(230,57,70,0.2)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+        <rect width="400" height="140" fill="url(#cc1)"/>
+        <circle cx="200" cy="65" r="30" fill="none" stroke="rgba(230,57,70,0.3)" stroke-width="1.5"/>
+        <path d="M 200 35 A 30 30 0 0 1 200 95" fill="rgba(230,57,70,0.1)" stroke="none"/>
+        <circle cx="200" cy="50" r="6" fill="rgba(230,57,70,0.2)"/>
+        <circle cx="200" cy="80" r="6" fill="rgba(255,255,255,0.08)"/>
+        <rect x="60" y="45" width="55" height="18" rx="3" fill="rgba(230,57,70,0.08)" stroke="rgba(230,57,70,0.2)" stroke-width="1"/>
+        <text x="67" y="58" font-family="monospace" font-size="8" fill="rgba(230,57,70,0.4)">SM2</text>
+        <rect x="60" y="70" width="55" height="18" rx="3" fill="rgba(255,107,43,0.08)" stroke="rgba(255,107,43,0.2)" stroke-width="1"/>
+        <text x="67" y="83" font-family="monospace" font-size="8" fill="rgba(255,107,43,0.4)">SM3</text>
+        <rect x="285" y="45" width="55" height="18" rx="3" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+        <text x="292" y="58" font-family="monospace" font-size="8" fill="rgba(212,168,67,0.4)">SM4</text>
+        <rect x="285" y="70" width="55" height="18" rx="3" fill="rgba(97,175,239,0.08)" stroke="rgba(97,175,239,0.2)" stroke-width="1"/>
+        <text x="292" y="83" font-family="monospace" font-size="8" fill="rgba(97,175,239,0.4)">SM9</text>
+        <text x="165" y="118" font-family="monospace" font-size="7" fill="rgba(255,255,255,0.2)">e-CNY · BSN · ChainMaker</text>
+      </svg>`,
+      icon: 'fas fa-yin-yang',
+      iconColor: '#e63946'
+    }
+  };
+  return map[id] || map.hashing;
+}
+
+// === DATA MATERI ===
+const lessons=[
+  {id:'hashing',episode:'01',title:'Hashing (Fungsi Hash Kriptografi)',breadcrumb:'Hashing',category:'kripto',
+    meta:[{icon:'fa-clock',text:'15 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Pemula'}],
+    intro:'Hashing mengubah data menjadi string berukuran tetap yang unik, bersifat satu arah (one-way), dan memiliki efek longsor (avalanche effect).',
+    sections:[
+      {heading:'Algoritma Hash Populer',content:'<ul><li><strong>MD5</strong> — Rentan collision, tidak disarankan.</li><li><strong>SHA-256</strong> — Standar industri, sangat aman.</li><li><strong>Blake3</strong> — Modern, sangat cepat.</li></ul>'},
+      {heading:'Salt: Pertahanan terhadap Rainbow Table',content:'<p>Salt adalah string acak yang ditambahkan sebelum hashing password.</p>'},
+      {heading:'Praktik: Password Hasher dengan Salt',content:'',code:{lang:'PYTHON',raw:`import hashlib\nimport os\n\ndef hash_password(password: str):\n    salt = os.urandom(16)\n    pwd_hash = hashlib.sha256(salt + password.encode('utf-8')).hexdigest()\n    return salt.hex(), pwd_hash\n\nsalt_val, stored_hash = hash_password("SuperSecret123")\nprint(f"Salt (Hex): {salt_val}")\nprint(f"Hash      : {stored_hash}")`}}
+    ],info:{type:'warning',text:'Untuk produksi, gunakan argon2 atau bcrypt — slow-hash untuk mempersulit brute force.'}},
+  {id:'symmetric',episode:'02',title:'Symmetric Encryption (Enkripsi Simetris)',breadcrumb:'Symmetric',category:'kripto',
+    meta:[{icon:'fa-clock',text:'12 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Pemula'}],
+    intro:'Satu kunci yang sama untuk enkripsi dan dekripsi. Cocok untuk data besar.',
+    sections:[
+      {heading:'AES-256',content:'<p>Standar global 256-bit, diadopsi NIST, dari HTTPS hingga enkripsi disk.</p>'},
+      {heading:'Praktik: Enkripsi Pesan',content:'<p><code>pip install cryptography</code></p>',code:{lang:'PYTHON',raw:`from cryptography.fernet import Fernet\n\nkey = Fernet.generate_key()\ncipher = Fernet(key)\n\npesan = b"Halo, pesan rahasia!"\ntoken = cipher.encrypt(pesan)\nprint(f"Terenkripsi: {token}")\n\npesan_asli = cipher.decrypt(token)\nprint(f"Dekripsi: {pesan_asli.decode()}")`}}
+    ],info:{type:'danger',text:'Kunci simetris HARUS disimpan rahasia. Jika bocor, seluruh data dapat dibuka.'}},
+  {id:'asymmetric',episode:'03',title:'Asymmetric Encryption',breadcrumb:'Asymmetric',category:'kripto',
+    meta:[{icon:'fa-clock',text:'18 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'Sepasang kunci: Public Key (enkripsi) dan Private Key (dekripsi).',
+    sections:[
+      {heading:'RSA vs ECC',content:'<ul><li><strong>RSA</strong> — Faktorisasi prima, kunci 2048-bit.</li><li><strong>ECC</strong> — Keamanan setara dengan kunci lebih kecil. Digunakan Bitcoin & Ethereum.</li></ul>'},
+      {heading:'Praktik: RSA Encrypt & Decrypt',content:'',code:{lang:'PYTHON',raw:`from cryptography.hazmat.primitives.asymmetric import rsa, padding\nfrom cryptography.hazmat.primitives import hashes\n\nprivate_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)\npublic_key = private_key.public_key()\n\npesan = b"Data rahasia perusahaan."\nciphertext = public_key.encrypt(\n    pesan,\n    padding.OAEP(\n        mgf=padding.MGF1(algorithm=hashes.SHA256()),\n        algorithm=hashes.SHA256(), label=None\n    )\n)\nprint(f"Ciphertext: {ciphertext.hex()[:50]}...")\n\nplaintext = private_key.decrypt(\n    ciphertext,\n    padding.OAEP(\n        mgf=padding.MGF1(algorithm=hashes.SHA256()),\n        algorithm=hashes.SHA256(), label=None\n    )\n)\nprint(f"Dekripsi: {plaintext.decode()}")`}}
+    ],info:{type:'info',text:'Asimetris lambat. Praktiknya: data dienkripsi AES, kunci AES dienkripsi RSA — hybrid encryption.'}},
+  {id:'digital-signature',episode:'04',title:'Digital Signature',breadcrumb:'Digital Signature',category:'kripto',
+    meta:[{icon:'fa-clock',text:'15 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'Menjamin autentikasi, integritas, dan non-repudiation.',
+    sections:[
+      {heading:'Praktik: Sign & Verify',content:'',code:{lang:'PYTHON',raw:`from cryptography.hazmat.primitives.asymmetric import padding\nfrom cryptography.hazmat.primitives import hashes\n\npesan = b"Transfer dana 10 Juta."\nsignature = private_key.sign(\n    pesan,\n    padding.PSS(\n        mgf=padding.MGF1(hashes.SHA256()),\n        salt_length=padding.PSS.MAX_LENGTH\n    ),\n    hashes.SHA256()\n)\nprint(f"Signature: {signature.hex()[:50]}...")\n\ntry:\n    public_key.verify(signature, pesan,\n        padding.PSS(mgf=padding.MGF1(hashes.SHA256()),\n        salt_length=padding.PSS.MAX_LENGTH),\n        hashes.SHA256())\n    print("STATUS: VALID!")\nexcept Exception:\n    print("STATUS: TIDAK VALID!")`}}
+    ],info:{type:'warning',text:'Signature bukan enkripsi. Private Key menandatangani, Public Key memverifikasi.'}},
+  {id:'key-exchange',episode:'05',title:'Key Exchange: Diffie-Hellman',breadcrumb:'Key Exchange',category:'kripto',
+    meta:[{icon:'fa-clock',text:'14 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'Menyepakati kunci rahasia di jalur publik tanpa mengirimkannya.',
+    sections:[
+      {heading:'Praktik: Simulasi DH',content:'',code:{lang:'PYTHON',raw:`from cryptography.hazmat.primitives.asymmetric import dh\n\nparams = dh.generate_parameters(generator=2, key_size=512)\nalice_priv = params.generate_private_key()\nalice_pub = alice_priv.public_key()\nbob_priv = params.generate_private_key()\nbob_pub = bob_priv.public_key()\n\nalice_shared = alice_priv.exchange(bob_pub)\nbob_shared = bob_priv.exchange(alice_pub)\n\nprint("Kunci sama?", alice_shared == bob_shared)`}}
+    ],info:{type:'info',text:'DH hanya key exchange, BUKAN enkripsi. Shared secret lalu digunakan untuk AES.'}},
+  {id:'hmac',episode:'06',title:'HMAC',breadcrumb:'HMAC',category:'kripto',
+    meta:[{icon:'fa-clock',text:'10 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Pemula'}],
+    intro:'Mirip Digital Signature tapi pakai kunci simetris. Lebih cepat dari RSA.',
+    sections:[
+      {heading:'Praktik: HMAC Verify',content:'',code:{lang:'PYTHON',raw:`import hmac, hashlib\n\nkunci = b"super_secret_key_123"\npesan = b"Transfer ke Budi Rp 1.000.000"\n\nmac_a = hmac.new(kunci, pesan, hashlib.sha256).hexdigest()\nmac_b = hmac.new(kunci, pesan, hashlib.sha256).hexdigest()\n\nif hmac.compare_digest(mac_a, mac_b):\n    print("STATUS: Pesan Asli!")\nelse:\n    print("STATUS: Pesan diubah!")`}}
+    ],info:{type:'warning',text:'Selalu gunakan hmac.compare_digest(), bukan ==, untuk cegah timing attack.'}},
+  {id:'bitcoin',episode:'07',title:'Bitcoin: Block, Mining, PoW, Wallet',breadcrumb:'Bitcoin',category:'web3',
+    meta:[{icon:'fa-clock',text:'20 menit'},{icon:'fa-book',text:'Teori'},{icon:'fa-signal',text:'Pemula'}],
+    intro:'Mata uang kripto pertama, diciptakan Satoshi Nakamoto 2009.',
+    sections:[
+      {heading:'Komponen Utama',content:'<ul><li><strong>Block</strong> — Kumpulan transaksi terhubung kriptografis.</li><li><strong>Mining & PoW</strong> — Pencarian nonce agar hash memenuhi target.</li><li><strong>Wallet</strong> — Menyimpan kunci privat/publik.</li></ul>'},
+      {heading:'Keamanan',content:'<p>SHA-256, ECDSA, PoW. Supply terbatas 21 juta BTC. Halving setiap ~4 tahun.</p>'}
+    ],info:{type:'info',text:'Block reward saat ini: 3.125 BTC per block.'}},
+  {id:'blockchain-py',episode:'08',title:'Blockchain: Bikin dengan Python',breadcrumb:'Blockchain Python',category:'web3',
+    meta:[{icon:'fa-clock',text:'25 menit'},{icon:'fa-code',text:'1 Lab'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'Bangun mini blockchain dari nol.',
+    sections:[
+      {heading:'Implementasi Lengkap',content:'',code:{lang:'PYTHON',raw:`import hashlib, time\n\nclass Block:\n    def __init__(self, idx, prev_hash, ts, data, nonce=0):\n        self.idx=idx; self.prev_hash=prev_hash\n        self.ts=ts; self.data=data; self.nonce=nonce\n        self.hash=self.calc_hash()\n    def calc_hash(self):\n        s=f"{self.idx}{self.prev_hash}{self.ts}{self.data}{self.nonce}"\n        return hashlib.sha256(s.encode()).hexdigest()\n    def mine(self, diff):\n        target="0"*diff\n        while self.hash[:diff]!=target:\n            self.nonce+=1; self.hash=self.calc_hash()\n        print(f"Block #{self.idx} mined! {self.hash}")\n\nclass Blockchain:\n    def __init__(self):\n        self.chain=[Block(0,"0",time.time(),"Genesis")]\n        self.diff=2\n    def add(self, data):\n        p=self.chain[-1]\n        b=Block(len(self.chain),p.hash,time.time(),data)\n        b.mine(self.diff); self.chain.append(b)\n\nbc=Blockchain()\nbc.add("Alice kirim 1 BTC ke Bob")\nbc.add("Bob kirim 0.5 BTC ke Charlie")`}}
+    ],info:{type:'warning',text:'Simulasi edukasi. Blockchain produksi jauh lebih kompleks.'}},
+  {id:'ethereum',episode:'09',title:'Ethereum: Akun, Gas, EVM, Node',breadcrumb:'Ethereum',category:'web3',
+    meta:[{icon:'fa-clock',text:'18 menit'},{icon:'fa-book',text:'Teori'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'"Komputer dunia" yang menjalankan smart contract.',
+    sections:[
+      {heading:'Komponen',content:'<ul><li><strong>EOA</strong> — Dikendalikan manusia via private key.</li><li><strong>Contract Account</strong> — Dikendalikan kode.</li><li><strong>Gas</strong> — Biaya komputasi dalam Gwei.</li><li><strong>EVM</strong> — Mesin virtual di seluruh node.</li><li><strong>Node</strong> — Validasi dan simpan blockchain.</li></ul>'},
+      {heading:'The Merge',content:'<p>Sept 2022, migrasi ke PoS. Validator kunci 32 ETH untuk validasi block.</p>'}
+    ],info:{type:'info',text:'Account-based model, kompatibel smart contract.'}},
+  {id:'solidity',episode:'10',title:'Solidity: ERC20 & NFT',breadcrumb:'Solidity',category:'web3',
+    meta:[{icon:'fa-clock',text:'22 menit'},{icon:'fa-code',text:'2 Labs'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'Bahasa utama smart contract EVM. Uji di remix.ethereum.org.',
+    sections:[
+      {heading:'ERC-20 Token',content:'',code:{lang:'SOLIDITY',raw:`// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\nimport "@openzeppelin/contracts/token/ERC20/ERC20.sol";\n\ncontract MyToken is ERC20 {\n    constructor() ERC20("CryptoEduToken", "CET") {\n        _mint(msg.sender, 1000000 * 10 ** decimals());\n    }\n}`}},
+      {heading:'ERC-721 NFT',content:'',code:{lang:'SOLIDITY',raw:`// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\nimport "@openzeppelin/contracts/token/ERC721/ERC721.sol";\n\ncontract MyNFT is ERC721 {\n    uint256 public nextId;\n    constructor() ERC721("CryptoEduNFT", "CENT") {}\n    function mint(address to) public {\n        _safeMint(to, nextId); nextId++;\n    }\n}`}}
+    ],info:{type:'warning',text:'Gunakan OpenZeppelin untuk produksi. Bug blockchain sulit di-patch.'}},
+  {id:'defi',episode:'11',title:'DeFi (Decentralized Finance)',breadcrumb:'DeFi',category:'web3',
+    meta:[{icon:'fa-clock',text:'16 menit'},{icon:'fa-book',text:'Teori'},{icon:'fa-signal',text:'Menengah'}],
+    intro:'Keuangan tanpa perantara via smart contract.',
+    sections:[
+      {heading:'Pilar DeFi',content:'<ul><li><strong>DEX</strong> — Uniswap, AMM x*y=k.</li><li><strong>Staking</strong> — Kunci koin, dapat reward.</li><li><strong>Lending</strong> — Aave, Compound.</li><li><strong>Yield Farming</strong> — Buru APY tertinggi.</li></ul>'},
+      {heading:'Risiko',content:'<p>Smart contract bug, impermanent loss, liquidation, rug pull. DYOR!</p>'}
+    ],info:{type:'danger',text:'TVL pernah $180M+. Rugi hack juga miliaran dolar.'}},
+  {id:'web3-tools',episode:'12',title:'Tools Web3 Wajib',breadcrumb:'Tools Web3',category:'web3',
+    meta:[{icon:'fa-clock',text:'12 menit'},{icon:'fa-book',text:'Teori'},{icon:'fa-signal',text:'Pemula'}],
+    intro:'Arsenal wajib developer Web3.',
+    sections:[
+      {heading:'4 Tools Wajib',content:'<ul><li><strong>Metamask</strong> — Dompet browser.</li><li><strong>Remix IDE</strong> — IDE online Solidity.</li><li><strong>Etherscan</strong> — Block explorer.</li><li><strong>Hardhat</strong> — Framework JS/TS profesional.</li></ul>'},
+      {heading:'Bonus',content:'<ul><li><strong>Foundry</strong> — Berbasis Rust, sangat cepat.</li><li><strong>The Graph</strong> — Indexing GraphQL.</li></ul>'}
+    ],info:{type:'info',text:'Mulai Metamask + Remix, lalu Hardhat untuk proyek kompleks.'}},
+  {id:'global-crypto',episode:'13',title:'Kriptografi dari Seluruh Dunia',breadcrumb:'Kriptografi Global',category:'global',
+    meta:[{icon:'fa-clock',text:'20 menit'},{icon:'fa-globe',text:'Sejarah'},{icon:'fa-signal',text:'Pemula'}],
+    intro:'Kriptografi: senjata rahasia perang dan perdagangan selama ribuan tahun.',
+    sections:[
+      {heading:'Kuno & Klasik',content:'<ul><li><strong>Hieroglif Non-Standar</strong> (Mesir ~1900 SM) — Enkripsi tertua.</li><li><strong>Caesar Cipher</strong> (Romawi ~58 SM) — Pergeseran 3 huruf.</li></ul>'},
+      {heading:'Perang Dunia',content:'<ul><li><strong>Enigma</strong> (Jerman) — Dipecahkan Alan Turing.</li><li><strong>Purple</strong> (Jepang) — Dipecahkan AS.</li><li><strong>Lorenz SZ</strong> (Jerman) — Colossus, komputer digital pertama.</li></ul>'},
+      {heading:'Era Digital',content:'<ul><li><strong>DES</strong> (AS 1977) — 56-bit, tidak aman.</li><li><strong>RSA</strong> (AS 1977) — Revolusi publik-privat.</li><li><strong>AES</strong> (Belgia/AS 2001) — Standar global.</li><li><strong>GOST</strong> (Rusia) — Setara AES-256.</li><li><strong>Camellia</strong> (Jepang) — Mitsubishi & NTT.</li><li><strong>CRYSTALS-Kyber</strong> — Post-Quantum, NIST 2024.</li></ul>'}
+    ],info:{type:'info',text:'Transisi ke PQC karena komputer kuantum bisa pecahkan RSA/ECC.'}},
+  {id:'china-crypto',episode:'14',title:'Kriptografi China: SM Series & e-CNY',breadcrumb:'Kriptografi China',category:'global',
+    meta:[{icon:'fa-clock',text:'22 menit'},{icon:'fa-yin-yang',text:'China'},{icon:'fa-signal',text:'Lanjutan'}],
+    intro:'Ekosistem kriptografi mandiri China: SM Series + Digital Yuan.',
+    sections:[
+      {heading:'SM Series',content:'<ul><li><strong>SM2</strong> — ECC 256-bit, setara RSA-2048.</li><li><strong>SM3</strong> — Hash 256-bit, setara SHA-256.</li><li><strong>SM4</strong> — Simetris 128-bit, setara AES-128.</li><li><strong>SM9</strong> — Identity-Based Cryptography.</li></ul>'},
+      {heading:'Digital Yuan (e-CNY)',content:'<ul><li><strong>Centralized</strong> — Dikeluarkan PBOC.</li><li><strong>Two-Tier</strong> — PBOC → Bank → Masyarakat.</li><li><strong>Dual Offline</strong> — Transaksi tanpa internet.</li><li><strong>Controllable Anonymity</strong> — Kecil anonim, besar terlacak.</li></ul>'},
+      {heading:'Blockchain China',content:'<ul><li><strong>BSN</strong> — Infrastruktur blockchain nasional.</li><li><strong>ChainMaker</strong> — Open-source, Go/Rust/C++/Java.</li><li><strong>Conflux</strong> — Public chain, Tree-Graph consensus.</li></ul>'},
+      {heading:'Praktik: SM3 Hash',content:'<p><code>pip install gmssl</code></p>',code:{lang:'PYTHON',raw:`from gmssl import sm3, func\n\ndata = b"Pesan rahasia untuk kriptografi China"\nresult = sm3.sm3_hash(func.bytes_to_list(data))\nprint(f"SM3 Hash: {result}")\n\nverify = sm3.sm3_hash(func.bytes_to_list(data))\nprint(f"Valid: {result == verify}")`}}
+    ],info:{type:'warning',text:'SM Series wajib di sektor keuangan/pemerintahan China sejak 2020.'}}
+];
+
+const pageNames={home:'Beranda'};
+lessons.forEach(l=>pageNames[l.id]=l.breadcrumb);
+let completedLessons=new Set();
+
+// === GENERATE CARDS ===
+function generateCards(){
+  ['kripto','web3','global'].forEach(cat=>{
+    const el=document.getElementById('cards-'+cat);
+    if(!el)return;
+    el.innerHTML='';
+    lessons.filter(l=>l.category===cat).forEach(l=>{
+      const il=getIllust(l.id);
+      const tags=l.sections.filter(s=>s.code).map(s=>s.code.lang);
+      el.innerHTML+=`<div class="card" onclick="navigateTo('${l.id}')">
+        <div class="card-illustration" style="background:${il.bg}">
+          ${il.svg}
+          <div class="illust-icon" style="color:${il.iconColor}"><i class="${il.icon}"></i></div>
+        </div>
+        <div class="card-body">
+          <div class="card-episode">EPISODE ${l.episode}</div>
+          <div class="card-title">${l.title}</div>
+          <div class="card-desc">${l.intro.substring(0,80)}...</div>
+          <div class="card-tags">${tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>`;
+    });
+  });
+}
+
+// === GENERATE LESSON PAGES ===
+function generateLessonPages(){
+  const c=document.getElementById('lesson-pages-container');
+  let h='';
+  lessons.forEach((l,i)=>{
+    const prev=i>0?lessons[i-1]:null, next=i<lessons.length-1?lessons[i+1]:null;
+    let secs='';
+    l.sections.forEach(s=>{
+      secs+=`<div class="lesson-section"><h3>${s.heading}</h3>`;
+      if(s.content)secs+=s.content;
+      if(s.code)secs+=buildCode(s.code.lang,s.code.raw);
+      secs+='</div>';
+    });
+    let info='';
+    if(l.info){
+      const ic={warning:'fa-exclamation-triangle',danger:'fa-skull-crossbones',info:'fa-info-circle'};
+      info=`<div class="info-box ${l.info.type}"><i class="fas ${ic[l.info.type]}"></i><p>${l.info.text}</p></div>`;
+    }
+    let nav='<div class="lesson-nav">';
+    nav+=prev?`<button class="lesson-nav-btn" onclick="navigateTo('${prev.id}')"><i class="fas fa-arrow-left"></i> ${prev.title.length>25?prev.title.substring(0,25)+'...':prev.title}</button>`:`<button class="lesson-nav-btn" onclick="navigateTo('home')"><i class="fas fa-arrow-left"></i> Beranda</button>`;
+    nav+=next?`<button class="lesson-nav-btn" style="margin-left:auto" onclick="navigateTo('${next.id}')">${next.title.length>25?next.title.substring(0,25)+'...':next.title} <i class="fas fa-arrow-right"></i></button>`:`<button class="lesson-nav-btn" style="margin-left:auto" onclick="navigateTo('home')">Selesai! <i class="fas fa-trophy"></i></button>`;
+    nav+='</div>';
+    h+=`<div class="page lesson-detail" id="page-${l.id}">
+      <div class="lesson-header">
+        <div class="lesson-number">EPISODE ${l.episode} / 14</div>
+        <h2 class="lesson-title">${l.title}</h2>
+        <div class="lesson-meta">${l.meta.map(m=>`<div class="lesson-meta-item"><i class="fas ${m.icon}"></i> ${m.text}</div>`).join('')}</div>
+        <div class="lesson-intro">${l.intro}</div>
+      </div>
+      ${secs}${info}
+      <button class="btn-play" style="margin-top:18px" onclick="completeLesson('${l.id}')"><i class="fas fa-check-circle"></i> TANDAI SELESAI</button>
+      ${nav}
+    </div>`;
+  });
+  c.innerHTML=h;
+}
+
+function buildCode(lang,raw){
+  let h=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  h=h.replace(/(#.*)/g,'<span class="cmt">$1</span>');
+  h=h.replace(/(&quot;.*?&quot;|".*?"|'.*?'|b".*?")/g,'<span class="str">$1</span>');
+  const kws=lang==='SOLIDITY'?['pragma','solidity','contract','function','public','returns','uint256','address','constructor','import','is','SPDX-License-Identifier','MIT']:['import','from','def','return','if','else','elif','while','for','in','class','print','try','except','True','False','None','not','and','or','as'];
+  kws.forEach(k=>{h=h.replace(new RegExp(`\\b(${k})\\b`,'g'),'<span class="kw">$1</span>');});
+  h=h.replace(/\b(\d+)\b/g,'<span class="num">$1</span>');
+  h=h.replace(/(\w+)\(/g,'<span class="fn">$1</span>(');
+  return`<div class="code-block"><div class="code-header"><span class="code-lang">${lang}</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> COPY</button></div><pre>${h}</pre></div>`;
+}
+
+function navigateTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const t=document.getElementById('page-'+id);
+  if(t)t.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+  document.getElementById('breadcrumbPage').textContent=pageNames[id]||id;
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeSidebar();
+}
+
+function copyCode(btn){
+  const pre=btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(()=>{
+    btn.innerHTML='<i class="fas fa-check"></i> COPIED!';
+    setTimeout(()=>btn.innerHTML='<i class="fas fa-copy"></i> COPY',2000);
+    showToast('Kode disalin!');
+  });
+}
+
+function completeLesson(id){
+  completedLessons.add(id);
+  const n=document.querySelector(`.nav-item[data-page="${id}"]`);
+  if(n)n.classList.add('completed');
+  updateProgress();
+  showToast('Materi selesai!');
+}
+
+function updateProgress(){
+  const p=Math.round((completedLessons.size/lessons.length)*100);
+  document.getElementById('progressFill').style.width=p+'%';
+  document.getElementById('progressText').textContent=p+'%';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
+
+document.getElementById('hamburgerBtn').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.contains('open')?closeSidebar():openSidebar();
+});
+document.getElementById('sidebarOverlay').addEventListener('click',closeSidebar);
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>navigateTo(item.dataset.page));
+  item.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();navigateTo(item.dataset.page);}});
+});
+
+function toggleRinnegan(){
+  document.body.style.filter=document.body.style.filter?'':'saturate(1.5) contrast(1.1)';
+  showToast(document.body.style.filter?'Rinnegan: AKTIF':'Rinnegan: NONAKTIF');
+}
+
+const rb=document.getElementById('rinneganBtn');
+window.addEventListener('scroll',()=>{rb.style.opacity=window.scrollY>200?'1':'0.3';});
+
+generateCards();
+generateLessonPages();
+updateProgress();
+</script>
+</body>
+</html>
